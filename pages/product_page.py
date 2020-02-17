@@ -34,3 +34,11 @@ class ProductPage(BasePage):
         product_price_in_alert = self.get_element_text(*ProductPageLocators.PRODUCT_PRICE_IN_ALERT)
         assert product_price == product_price_in_alert, \
             'got %s in alert. should be %s' % (product_price_in_alert, product_price)
+
+    def should_not_be_success_message(self):
+        assert self.is_not_element_present(*ProductPageLocators.SUCCESS_MESSAGE), \
+            'success message is presented, but should not be'
+
+    def should_disappear_success_message(self):
+        assert self.is_disappeared(*ProductPageLocators.SUCCESS_MESSAGE), \
+            'success message has not disappeared, but had to'

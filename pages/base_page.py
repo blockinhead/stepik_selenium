@@ -69,3 +69,12 @@ class BasePage(object):
     def go_to_login_page(self):
         login_link = self.browser.find_element(*BasePageLocators.LOGIN_LINK)
         login_link.click()
+
+    def should_be_basket_link(self):
+        assert \
+            self.is_element_present(*BasePageLocators.BASKET_LINK), \
+            'basket link in not presented'
+
+    def go_to_basket_page(self):
+        basket_link = self.browser.find_element(*BasePageLocators.BASKET_LINK)
+        basket_link.click()

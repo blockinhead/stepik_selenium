@@ -1,16 +1,46 @@
 # encoding: utf8
 
 import pytest
+import time
 from .pages.product_page import ProductPage
 from .pages.login_page import LoginPage
 from .pages.basket_page import BasketPage
-import time
 
 link_template = 'http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer%d'
 links_to_test = [link_template % i for i in range(10)]
 links_to_test[7] = pytest.param(links_to_test[7], marks=pytest.mark.xfail)
 
 single_page_to_test = ['http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/']
+
+
+@pytest.mark.user_product
+class TestUserAddToBasketFromProductPage(object):
+
+    @pytest.fixture(scope='function', autouse=True)
+    def setup(self, browser):
+        link = 'http://selenium1py.pythonanywhere.com/en-gb/accounts/login/'
+        login_page = LoginPage(browser, link)
+        login_page.open()
+        t = str(time.time())
+        login_page.register_new_user(t + '@fakemail.com', t[:10])
+        login_page.should_be_authorized_user()
+
+        self.product_link = 'http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=newYear2019'
+
+    def test_user_cant_see_success_message(self, browser):
+        product_page = ProductPage(browser, self.product_link)
+        product_page.open()
+        product_page.should_not_be_success_message()
+        time.sleep(10)
+
+    def test_user_can_add_product_to_basket(self, browser):
+        product_page = ProductPage(browser, self.product_link)
+        product_page.open()
+        product_page.add_to_basket()
+        product_page.solve_quiz_and_get_code()
+        product_page.should_be_valid_alert()
+        time.sleep(10)
+
 
 '''
 @pytest.mark.parametrize('link', links_to_test)
